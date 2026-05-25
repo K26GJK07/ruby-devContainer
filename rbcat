@@ -1,0 +1,9 @@
+#! /usr/local/bin/ruby
+
+# 環境変数 PATH
+
+File.open ARGV[0], "r" do |f|
+  while line = f.gets
+    puts line
+  end
+end
