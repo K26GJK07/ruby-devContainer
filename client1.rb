@@ -12,17 +12,25 @@ cmd = 'GET ' + path + version + "\r\n" + "\r\n"
 pp cmd
 sock.print cmd
 
-line = sock.gets
+is_body = false
 
-#-----------------------------
-#一行だけ表示
-#-----------------------------
+#------------------------------
+#Ruby風 (条件分岐の書き方)
+#------------------------------
 
-#puts line
-
-#-----------------------------
-#複数行表示(全部)
-#-----------------------------
 while line = sock.gets
-  puts line
+  puts line if is_body
+  is_body = true if line == "\r\n"
 end
+
+#------------------------------
+#一般的なアルゴリズム
+#------------------------------
+# while line = sock.gets
+#   if is_body
+#     puts line
+#   end
+#   if line == "\r\n"
+#     is_body = true
+#   end
+# end
