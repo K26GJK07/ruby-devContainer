@@ -5,12 +5,13 @@ require 'socket'
 host = 'www.is.kyusan-u.ac.jp'
 port = 'http'
 path = '/~toshi/ '
-version = 'HTTP/1.0'
+version = 'HTTP/1.1'
 
 sock = TCPSocket.new host, port
-cmd = 'GET ' + path + version + "\r\n" + "\r\n"
+cmd = 'GET ' + path + version + "\r\n" + 'HOST: ' + host + "\r\n" + "\r\n"
 pp cmd
 sock.print cmd
+
 
 is_body = false
 
