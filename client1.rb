@@ -2,10 +2,19 @@
 
 require 'socket'
 
-host = 'www.is.kyusan-u.ac.jp'
+#------------------------------
+#コマンドライン引数
+#------------------------------
+
+host = ARGV[0]
 port = 'http'
-path = '/~toshi/ '
-version = 'HTTP/1.1'
+path = ARGV[1]
+
+if path == nil
+  path = '/'
+end
+
+version = ' HTTP/1.1'
 
 sock = TCPSocket.new host, port
 #cmd = 'GET ' + path + version + "\r\n" + 'HOST: ' + host + "\r\n" + 'Connection: ' + 'close' + "\r\n\r\n"
@@ -13,7 +22,10 @@ sock = TCPSocket.new host, port
 #------------------------------
 #別の書き方(文字列で書く)
 #------------------------------
-cmd = "GET #{path}#{version}\r\nHOST: #{host}\r\nConnection: close\r\n\r\n"
+cmd  = "GET #{path}#{version}\r\n"
+cmd += "HOST: #{host}\r\n"
+cmd += "Connection: close\r\n"
+cmd += "\r\n"
 pp cmd
 sock.print cmd
 
