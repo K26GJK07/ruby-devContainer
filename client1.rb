@@ -8,12 +8,12 @@ path = '/~toshi/ '
 version = 'HTTP/1.1'
 
 sock = TCPSocket.new host, port
-#cmd = 'GET ' + path + version + "\r\n" + 'HOST: ' + host + "\r\n" + "\r\n"
+#cmd = 'GET ' + path + version + "\r\n" + 'HOST: ' + host + "\r\n" + 'Connection: ' + 'close' + "\r\n\r\n"
 
 #------------------------------
 #別の書き方(文字列で書く)
 #------------------------------
-cmd = "GET #{path}#{version}\r\nHOST: #{host}\r\n\r\n"
+cmd = "GET #{path}#{version}\r\nHOST: #{host}\r\nConnection: close\r\n\r\n"
 pp cmd
 sock.print cmd
 
