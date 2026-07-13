@@ -4,9 +4,19 @@ require 'socket'
 
 def server s
   cmd, path, ver = s.gets.split " "
+  # HTTP/1.1 として正しく返答
+  # 1行目 HTTP/1.1 200 OK
+  # 2行目 Content-Type: text/html
+  # 3行目 空行
+  # 4行目 コンテンツ
+  # 最後 ソケットをクローズ
+
   if path == "/"
+    s.print "HTTP/1.0 200 OK\r\n"
+    s.print "Content-Type: text/html\r\n"
+    s.print "\r\n"
     pp "INDEX"
-    s.puts "index"
+    s.puts "<h1>index</h1>"
   else
     pp "OTHER"
     s.puts "other"
