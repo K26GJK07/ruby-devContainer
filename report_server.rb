@@ -9,8 +9,9 @@
 #  ・csvデータなので、必要なデータを抽出 -> timestamp・action・current_count
 #  ・timestamp -> 時間帯ごとに分類
 #  ・action -> 乗車数・降車数を算出
-#  ・current_count -> その時間帯の最大車内人数を算出
-# ---------------------------------------------------------
+#  ・max_count -> その時間帯のcurrent_countの最大値を算出
+#  ・min_count -> その時間帯のcurrent_countの最小値を算出
+#   ---------------------------------------------------------
 
 require 'socket'
 
@@ -18,7 +19,8 @@ path = 'count_log.csv'
 
 entry_count = Array.new(24, 0)
 exit_count = Array.new(24, 0)
-max_current_count = Array.new(24, 0)
+max_count = Array.new(24, 0)
+min_count = Array.new(24, 0)
 
 File.open path, "r" do |f|
   while line = f.gets
@@ -39,8 +41,12 @@ File.open path, "r" do |f|
       exit_count[hour] += 1
     end
 
-    if current_count.to_i > max_current_count[hour]
-      max_current_count[hour] = current_count.to_i
+    if current_count.to_i > max_count[hour]
+      max_count[hour] = current_count.to_i
+    end
+
+    if current_count.to_i < min_count[hour] || min_count[hour] == 0
+      min_count[hour] = current_count.to_i
     end
   end
 end
@@ -55,7 +61,7 @@ loop do
   s = gs.accept
 
   (10..17).each do |hour|
-    s.puts "#{hour},#{entry_count[hour]},#{exit_count[hour]},#{max_current_count[hour]}"
+    s.puts "#{hour},#{entry_count[hour]},#{exit_count[hour]},#{max_count[hour]},#{min_count[hour]}"
   end
 
   s.close
