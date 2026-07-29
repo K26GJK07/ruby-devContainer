@@ -40,6 +40,19 @@ File.open path, "r" do |f|
   end
 end
 
-(10..17).each do |hour|
-  puts "#{hour}時台: 乗車数 #{entry_count[hour]}人 降車数 #{exit_count[hour]}人"
+# (10..17).each do |hour|
+#   puts "#{hour}時台: 乗車数 #{entry_count[hour]}人 降車数 #{exit_count[hour]}人"
+# end
+
+gs = TCPServer.open 10000
+loop do
+  pp "start accept"
+  s = gs.accept
+
+  (10..17).each do |hour|
+    s.puts "#{hour},#{entry_count[hour]},#{exit_count[hour]}人"
+  end
+
+  s.close
 end
+
