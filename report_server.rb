@@ -18,6 +18,7 @@ path = 'count_log.csv'
 
 entry_count = Array.new(24, 0)
 exit_count = Array.new(24, 0)
+max_current_count = Array.new(24, 0)
 
 File.open path, "r" do |f|
   while line = f.gets
@@ -37,6 +38,10 @@ File.open path, "r" do |f|
     elsif action == "Exit"
       exit_count[hour] += 1
     end
+
+    if current_count.to_i > max_current_count[hour]
+      max_current_count[hour] = current_count.to_i
+    end
   end
 end
 
@@ -50,9 +55,10 @@ loop do
   s = gs.accept
 
   (10..17).each do |hour|
-    s.puts "#{hour},#{entry_count[hour]},#{exit_count[hour]}"
+    s.puts "#{hour},#{entry_count[hour]},#{exit_count[hour]},#{max_current_count[hour]}"
   end
 
   s.close
 end
+
 
