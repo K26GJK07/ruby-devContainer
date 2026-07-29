@@ -10,3 +10,23 @@
 
 require 'socket'
 
+host = ARGV[0]
+port = ARGV[1]
+
+if host == nil
+  host = 'localhost'
+end
+
+if port == nil
+  port = 10000
+end
+
+sock = TCPSocket.new host, port
+
+while line = sock.gets
+  line = line.chomp
+  hour, entry, exit = line.split ","
+  puts "#{hour}時台: 乗車数 #{entry}人 降車数 #{exit}人"
+end
+
+sock.close
