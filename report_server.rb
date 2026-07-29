@@ -15,51 +15,54 @@
 
 require 'socket'
 
-path = 'count_log.csv'
+#------------------------------
+# CSVデータの解析
+#------------------------------
+
+def load_csv path
 
 entry_count = Array.new(24, 0)
 exit_count = Array.new(24, 0)
 max_count = Array.new(24, 0)
 min_count = Array.new(24, nil)
 
-File.open path, "r" do |f|
-  while line = f.gets
-    line = line.chomp
-    if line.start_with?("timestamp")
-      next
-    end
-    timestamp, action, id, current_count = line.split ","
+  File.open path, "r" do |f|
+    while line = f.gets
+      line = line.chomp
+      if line.start_with?("timestamp")
+        next
+      end
+      timestamp, action, id, current_count = line.split ","
 
-    date, time = timestamp.split " "
-    #デバッグ用
-    #p [date, time, action, current_count]
+      date, time = timestamp.split " "
+      #デバッグ用
+      #p [date, time, action, current_count]
 
-    hour = time[0, 2].to_i
-    if action == "Entry"
-      entry_count[hour] += 1
-    elsif action == "Exit"
-      exit_count[hour] += 1
-    end
+      hour = time[0, 2].to_i
+      if action == "Entry"
+        entry_count[hour] += 1
+      elsif action == "Exit"
+        exit_count[hour] += 1
+      end
 
-    if current_count.to_i > max_count[hour]
-      max_count[hour] = current_count.to_i
-    end
+      if current_count.to_i > max_count[hour]
+        max_count[hour] = current_count.to_i
+      end
 
-    if min_count[hour] == nil || current_count.to_i < min_count[hour]
-      min_count[hour] = current_count.to_i
+      if min_count[hour] == nil || current_count.to_i < min_count[hour]
+        min_count[hour] = current_count.to_i
+      end
     end
   end
+
+  return entry_count, exit_count, max_count, min_count
 end
 
-# (10..17).each do |hour|
-#   puts "#{hour}時台: 乗車数 #{entry_count[hour]}人 降車数 #{exit_count[hour]}人"
-# end
+#------------------------------
+# CSVデータの集計
+#------------------------------
 
-gs = TCPServer.open 10000
-loop do
-  pp "start accept"
-  s = gs.accept
-
+def server s, entry_count, exit_count, max_count, min_count
   (10..17).each do |hour|
     s.puts "#{hour},#{entry_count[hour]},#{exit_count[hour]},#{max_count[hour]},#{min_count[hour]}"
   end
@@ -67,4 +70,11 @@ loop do
   s.close
 end
 
+entry_count, exit_count, max_count, min_count = load_csv 'count_log.csv'
 
+gs = TCPServer.open 10000
+loop do
+  pp "start accept"
+  s = gs.accept
+  server s, entry_count, exit_count, max_count, min_count
+end
