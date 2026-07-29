@@ -50,7 +50,7 @@ loop do
   s = gs.accept
 
   (10..17).each do |hour|
-    s.puts "#{hour},#{entry_count[hour]},#{exit_count[hour]}人"
+    s.puts "#{hour},#{entry_count[hour]},#{exit_count[hour]}"
   end
 
   s.close
