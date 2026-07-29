@@ -16,6 +16,9 @@ require 'socket'
 
 path = 'count_log.csv'
 
+entry_count = Array.new(24, 0)
+exit_count = Array.new(24, 0)
+
 File.open path, "r" do |f|
   while line = f.gets
     line = line.chomp
@@ -25,6 +28,18 @@ File.open path, "r" do |f|
     timestamp, action, id, current_count = line.split ","
 
     date, time = timestamp.split " "
-    p [date, time, action, current_count]
+    #デバッグ用
+    #p [date, time, action, current_count]
+
+    hour = time[0, 2].to_i
+    if action == "Entry"
+      entry_count[hour] += 1
+    elsif action == "Exit"
+      exit_count[hour] += 1
+    end
   end
+end
+
+(10..17).each do |hour|
+  puts "#{hour}時台: 乗車数 #{entry_count[hour]}人 降車数 #{exit_count[hour]}人"
 end
