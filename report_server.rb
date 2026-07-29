@@ -20,7 +20,7 @@ path = 'count_log.csv'
 entry_count = Array.new(24, 0)
 exit_count = Array.new(24, 0)
 max_count = Array.new(24, 0)
-min_count = Array.new(24, 0)
+min_count = Array.new(24, nil)
 
 File.open path, "r" do |f|
   while line = f.gets
@@ -45,7 +45,7 @@ File.open path, "r" do |f|
       max_count[hour] = current_count.to_i
     end
 
-    if current_count.to_i < min_count[hour] || min_count[hour] == 0
+    if min_count[hour] == nil || current_count.to_i < min_count[hour]
       min_count[hour] = current_count.to_i
     end
   end
