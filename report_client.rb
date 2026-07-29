@@ -26,8 +26,8 @@ sock = TCPSocket.new host, port
 while line = sock.gets
   line = line.chomp
   line = line.force_encoding("UTF-8")  
-  hour, entry, exit = line.split ","
-  puts "#{hour}時台: 乗車数 #{entry}人 降車数 #{exit}人"
+  hour, entry, exit, max_current_count = line.split ","
+  puts "#{hour}時台: 乗車数 #{entry}人 降車数 #{exit}人 最大車内人数 #{max_current_count}人"
 end
 
 sock.close
