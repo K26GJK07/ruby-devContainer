@@ -23,6 +23,8 @@ File.open path, "r" do |f|
       next
     end
     timestamp, action, id, current_count = line.split ","
-    p [timestamp, action, current_count]
+
+    date, time = timestamp.split " "
+    p [date, time, action, current_count]
   end
 end
