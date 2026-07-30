@@ -10,14 +10,8 @@
 
 require 'socket'
 
-cmd = ARGV[0]
-time_zone = ARGV[1]
-host = ARGV[2]
-port = ARGV[3]
-
-if cmd == nil
-  cmd = "ALL"
-end
+host = ARGV[0]
+port = ARGV[1]
 
 if host == nil
   host = 'localhost'
@@ -30,32 +24,46 @@ end
 sock = TCPSocket.new host, port
 
 #------------------------------
-# コマンド送信
+# コマンド入力
 #------------------------------
 
-if time_zone == nil
-  sock.puts cmd
-else
-  sock.puts "#{cmd} #{time_zone}"
-end
+while true
+    print "コマンドを入力してください： "
+  input = gets
 
-while line = sock.gets
-  line = line.chomp
-  line = line.force_encoding("UTF-8")  
-
-  if line == "."
+  if input == nil
     break
   end
 
-  if line == "ERROR"
-    puts "ERROR: 時間帯を指定してください"
-  elsif line == "ERROR_no_data"
-    puts "ERROR: 指定した時間帯のデータがありません。"
+  cmd, time_zone = input.chomp.split " "
+  sock.puts input.chomp
+
+  if cmd == "QUIT"
     break
-  else
-    hour, entry, exit, max_current_count, min_count = line.split ","
-      puts "#{hour}時台: 乗車数 #{entry}人 降車数 #{exit}人 最大 #{max_current_count}人 最小 #{min_count}人"
+  end
+
+#------------------------------
+# コマンドの送信と結果の受信
+#------------------------------
+
+  while line = sock.gets
+    line = line.chomp
+    line = line.force_encoding("UTF-8")  
+
+    if line == "."
+      break
+    end
+
+    if line == "ERROR"
+      puts "ERROR: 時間帯を指定してください"
+    elsif line == "ERROR_no_data"
+      puts "ERROR: 指定した時間帯のデータがありません。"
+    elsif line == "ERROR_unknown_command"
+      puts "ERROR: 未定義のコマンドです"
+    else
+      hour, entry, exit, max_current_count, min_count = line.split ","
+        puts "#{hour}時台: 乗車数 #{entry}人 降車数 #{exit}人 最大 #{max_current_count}人 最小 #{min_count}人"
+    end
   end
 end
-
 sock.close
