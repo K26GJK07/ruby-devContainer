@@ -74,8 +74,12 @@ def server s, entry_count, exit_count, max_count, min_count
       end
        s.puts "."
     elsif cmd == "HOUR"
-      hour = time_zone.to_i
-      s.puts "#{hour},#{entry_count[hour]},#{exit_count[hour]},#{max_count[hour]},#{min_count[hour]}"
+      if time_zone == nil
+        s.puts "ERROR"
+      else
+        hour = time_zone.to_i
+        s.puts "#{hour},#{entry_count[hour]},#{exit_count[hour]},#{max_count[hour]},#{min_count[hour]}"
+      end
       s.puts "."
     end
   end

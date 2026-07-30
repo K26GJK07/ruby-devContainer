@@ -47,8 +47,13 @@ while line = sock.gets
     break
   end
 
-  hour, entry, exit, max_current_count, min_count = line.split ","
-    puts "#{hour}時台: 乗車数 #{entry}人 降車数 #{exit}人 最大 #{max_current_count}人 最小 #{min_count}人"
+  if line == "ERROR"
+    puts "ERROR: 時間帯の指定が不正です"
+    break
+  else
+    hour, entry, exit, max_current_count, min_count = line.split ","
+      puts "#{hour}時台: 乗車数 #{entry}人 降車数 #{exit}人 最大 #{max_current_count}人 最小 #{min_count}人"
+  end
 end
 
 sock.close
