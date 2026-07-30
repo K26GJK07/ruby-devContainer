@@ -25,6 +25,8 @@ entry_count = Array.new(24, 0)
 exit_count = Array.new(24, 0)
 max_count = Array.new(24, 0)
 min_count = Array.new(24, nil)
+max_hour = nil
+min_hour = nil
 
   File.open path, "r" do |f|
     while line = f.gets
@@ -52,24 +54,33 @@ min_count = Array.new(24, nil)
       if min_count[hour] == nil || current_count.to_i < min_count[hour]
         min_count[hour] = current_count.to_i
       end
+
+      if max_hour == nil || hour > max_hour
+        max_hour = hour
+      end
+
+      if min_hour == nil || hour < min_hour
+        min_hour = hour
+      end
+
     end
   end
 
-  return entry_count, exit_count, max_count, min_count
+  return entry_count, exit_count, max_count, min_count, max_hour, min_hour
 end
 
 #------------------------------
 # CSVデータの集計
 #------------------------------
 
-def server s, entry_count, exit_count, max_count, min_count
+def server s, entry_count, exit_count, max_count, min_count, max_hour, min_hour
 
   while line = s.gets
     cmd, time_zone = line.chomp.split " "
     pp cmd
 
     if cmd == "ALL"
-      (6..23).each do |hour|
+      (min_hour..max_hour).each do |hour|
         s.puts "#{hour},#{entry_count[hour]},#{exit_count[hour]},#{max_count[hour]},#{min_count[hour]}"
       end
        s.puts "."
@@ -78,7 +89,12 @@ def server s, entry_count, exit_count, max_count, min_count
         s.puts "ERROR"
       else
         hour = time_zone.to_i
-        s.puts "#{hour},#{entry_count[hour]},#{exit_count[hour]},#{max_count[hour]},#{min_count[hour]}"
+        if hour < min_hour || hour > max_hour
+          s.puts "ERROR_no_data"
+        else
+          hour = time_zone.to_i
+          s.puts "#{hour},#{entry_count[hour]},#{exit_count[hour]},#{max_count[hour]},#{min_count[hour]}"
+        end
       end
       s.puts "."
     end
@@ -86,11 +102,11 @@ def server s, entry_count, exit_count, max_count, min_count
   s.close
 end
 
-entry_count, exit_count, max_count, min_count = load_csv 'count_log.csv'
+entry_count, exit_count, max_count, min_count, max_hour, min_hour = load_csv 'count_log.csv'
 
 gs = TCPServer.open 10000
 loop do
   pp "start accept"
   s = gs.accept
-  server s, entry_count, exit_count, max_count, min_count
+  server s, entry_count, exit_count, max_count, min_count, max_hour, min_hour
 end

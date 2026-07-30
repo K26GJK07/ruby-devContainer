@@ -48,7 +48,9 @@ while line = sock.gets
   end
 
   if line == "ERROR"
-    puts "ERROR: 時間帯の指定が不正です"
+    puts "ERROR: 時間帯を指定してください"
+  elsif line == "ERROR_no_data"
+    puts "ERROR: 指定した時間帯のデータがありません。"
     break
   else
     hour, entry, exit, max_current_count, min_count = line.split ","
