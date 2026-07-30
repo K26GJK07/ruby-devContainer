@@ -39,8 +39,6 @@ else
   sock.puts "#{cmd} #{time_zone}"
 end
 
-sock.puts cmd
-
 while line = sock.gets
   line = line.chomp
   line = line.force_encoding("UTF-8")  
