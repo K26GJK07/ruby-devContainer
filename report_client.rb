@@ -10,8 +10,13 @@
 
 require 'socket'
 
-host = ARGV[0]
-port = ARGV[1]
+cmd = ARGV[0]
+host = ARGV[1]
+port = ARGV[2]
+
+if cmd == nil
+  cmd = "ALL"
+end
 
 if host == nil
   host = 'localhost'
@@ -23,11 +28,22 @@ end
 
 sock = TCPSocket.new host, port
 
+#------------------------------
+# コマンド送信
+#------------------------------
+
+sock.puts cmd
+
 while line = sock.gets
   line = line.chomp
   line = line.force_encoding("UTF-8")  
+
+  if line == "."
+    break
+  end
+
   hour, entry, exit, max_current_count, min_count = line.split ","
-  puts "#{hour}時台: 乗車数 #{entry}人 降車数 #{exit}人 最大 #{max_current_count}人 最小 #{min_count}人"
+    puts "#{hour}時台: 乗車数 #{entry}人 降車数 #{exit}人 最大 #{max_current_count}人 最小 #{min_count}人"
 end
 
 sock.close

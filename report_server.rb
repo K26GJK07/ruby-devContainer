@@ -63,10 +63,18 @@ end
 #------------------------------
 
 def server s, entry_count, exit_count, max_count, min_count
-  (6..23).each do |hour|
-    s.puts "#{hour},#{entry_count[hour]},#{exit_count[hour]},#{max_count[hour]},#{min_count[hour]}"
-  end
 
+  while line = s.gets
+    cmd = line.chomp
+    pp cmd
+
+    if cmd == "ALL"
+      (6..23).each do |hour|
+        s.puts "#{hour},#{entry_count[hour]},#{exit_count[hour]},#{max_count[hour]},#{min_count[hour]}"
+      end
+       s.puts "."
+    end
+  end
   s.close
 end
 
