@@ -11,8 +11,9 @@
 require 'socket'
 
 cmd = ARGV[0]
-host = ARGV[1]
-port = ARGV[2]
+time_zone = ARGV[1]
+host = ARGV[2]
+port = ARGV[3]
 
 if cmd == nil
   cmd = "ALL"
@@ -31,6 +32,12 @@ sock = TCPSocket.new host, port
 #------------------------------
 # コマンド送信
 #------------------------------
+
+if time_zone == nil
+  sock.puts cmd
+else
+  sock.puts "#{cmd} #{time_zone}"
+end
 
 sock.puts cmd
 

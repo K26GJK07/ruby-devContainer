@@ -65,7 +65,7 @@ end
 def server s, entry_count, exit_count, max_count, min_count
 
   while line = s.gets
-    cmd = line.chomp
+    cmd, time_zone = line.chomp.split " "
     pp cmd
 
     if cmd == "ALL"
@@ -73,6 +73,10 @@ def server s, entry_count, exit_count, max_count, min_count
         s.puts "#{hour},#{entry_count[hour]},#{exit_count[hour]},#{max_count[hour]},#{min_count[hour]}"
       end
        s.puts "."
+    elsif cmd == "HOUR"
+      hour = time_zone.to_i
+      s.puts "#{hour},#{entry_count[hour]},#{exit_count[hour]},#{max_count[hour]},#{min_count[hour]}"
+      s.puts "."
     end
   end
   s.close
