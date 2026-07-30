@@ -10,6 +10,32 @@
 
 require 'socket'
 
+#------------------------------
+# コマンドの送信と結果の受信
+#------------------------------
+def receiver sock
+  while line = sock.gets
+    line = line.chomp
+    line = line.force_encoding("UTF-8")  
+
+    if line == "."
+      break
+    end
+
+    if line == "ERROR"
+      puts "ERROR: 時間帯を指定してください"
+    elsif line == "ERROR_no_data"
+      puts "ERROR: 指定した時間帯のデータがありません。"
+    elsif line == "ERROR_unknown_command"
+      puts "ERROR: 未定義のコマンドです"
+    else
+      hour, entry, exit, max_current_count, min_count = line.split ","
+        puts "#{hour}時台: 乗車数 #{entry}人 降車数 #{exit}人 最大 #{max_current_count}人 最小 #{min_count}人"
+    end
+  end
+end
+
+
 host = ARGV[0]
 port = ARGV[1]
 
@@ -31,39 +57,19 @@ while true
     print "コマンドを入力してください： "
   input = gets
 
-  if input == nil
-    break
-  end
-
   cmd, time_zone = input.chomp.split " "
-  sock.puts input.chomp
 
+  if cmd == nil
+    puts "コマンドが未入力"
+    next
+  end
+    sock.puts input.chomp
+  
   if cmd == "QUIT"
     break
   end
 
-#------------------------------
-# コマンドの送信と結果の受信
-#------------------------------
-
-  while line = sock.gets
-    line = line.chomp
-    line = line.force_encoding("UTF-8")  
-
-    if line == "."
-      break
-    end
-
-    if line == "ERROR"
-      puts "ERROR: 時間帯を指定してください"
-    elsif line == "ERROR_no_data"
-      puts "ERROR: 指定した時間帯のデータがありません。"
-    elsif line == "ERROR_unknown_command"
-      puts "ERROR: 未定義のコマンドです"
-    else
-      hour, entry, exit, max_current_count, min_count = line.split ","
-        puts "#{hour}時台: 乗車数 #{entry}人 降車数 #{exit}人 最大 #{max_current_count}人 最小 #{min_count}人"
-    end
-  end
+  receiver sock
 end
+
 sock.close
