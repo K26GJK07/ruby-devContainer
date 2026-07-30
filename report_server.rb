@@ -97,6 +97,11 @@ def server s, entry_count, exit_count, max_count, min_count, max_hour, min_hour
         end
       end
       s.puts "."
+    elsif cmd == "QUIT"
+      break
+    else
+      s.puts "ERROR_unknown_command"
+      s.puts "."
     end
   end
   s.close
